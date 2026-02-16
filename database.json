@@ -1,80 +1,8 @@
 {
-  "users": [
-    {
-      "id": "admin1",
-      "username": "hamody",
-      "email": "admin@social.com",
-      "password": "Mm772005",
-      "phone": "",
-      "age": 25,
-      "gender": "male",
-      "country": "مصر",
-      "avatar": "",
-      "isVerified": true,
-      "isAdmin": true,
-      "isBanned": false,
-      "createdAt": "2026-02-16T02:29:49.965Z"
-    },
-    {
-      "id": "user1771209009082",
-      "username": "Hamodyrat",
-      "email": "mahmoudhshs8@gmail.com",
-      "phone": "01096026268",
-      "age": 21,
-      "gender": "male",
-      "country": "مصر",
-      "password": "Mm772005",
-      "avatar": "",
-      "isVerified": false,
-      "isAdmin": false,
-      "isBanned": false,
-      "createdAt": "2026-02-16T02:30:09.087Z"
-    },
-    {
-      "id": "user1771210313755",
-      "username": "mah",
-      "email": "mahmoudhbbshs8@gmail.com",
-      "phone": "01096026268",
-      "age": 21,
-      "gender": "male",
-      "country": "مصر",
-      "password": "Mm772005",
-      "avatar": "",
-      "isVerified": false,
-      "isAdmin": false,
-      "isBanned": false,
-      "createdAt": "2026-02-16T02:51:53.756Z"
-    },
-    {
-      "id": "user1771210850146",
-      "username": "Mm",
-      "email": "mahmounndhshs8@gmail.com",
-      "phone": "01096026268",
-      "age": 21,
-      "gender": "male",
-      "country": "مصر",
-      "password": "Mm772005",
-      "avatar": "",
-      "isVerified": false,
-      "isAdmin": false,
-      "isBanned": false,
-      "createdAt": "2026-02-16T03:00:50.150Z"
-    }
-  ],
-  "posts": [
-    {
-      "id": "post1771210857342",
-      "content": "G",
-      "image": "",
-      "isPinned": false,
-      "authorId": "user1771210850146",
-      "createdAt": "2026-02-16T03:00:57.342Z"
-    }
-  ],
-  "likes": [],
-  "messages": [],
-  "notifications": [],
-  "settings": {
-    "maintenanceMode": false
-  }
+  "users": null,
+  "posts": null,
+  "likes": null,
+  "messages": null,
+  "notifications": null,
+  "settings": null
 }
