@@ -55,6 +55,14 @@
       "isPinned": false,
       "authorId": "user1771211432390",
       "createdAt": "2026-02-16T03:10:55.314Z"
+    },
+    {
+      "id": "post1771211488908",
+      "content": "Gi",
+      "image": "",
+      "isPinned": false,
+      "authorId": "user1771211432390",
+      "createdAt": "2026-02-16T03:11:28.908Z"
     }
   ],
   "likes": [],
