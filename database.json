@@ -14,6 +14,21 @@
       "isAdmin": true,
       "isBanned": false,
       "createdAt": "2026-02-16T02:27:58.814Z"
+    },
+    {
+      "id": "user1771211432390",
+      "username": "Hamodyrat",
+      "email": "mahmoudhshs8@gmail.com",
+      "phone": "01096026268",
+      "age": 21,
+      "gender": "male",
+      "country": "مصر",
+      "password": "Mm772005",
+      "avatar": "",
+      "isVerified": false,
+      "isAdmin": false,
+      "isBanned": false,
+      "createdAt": "2026-02-16T03:10:32.394Z"
     }
   ],
   "posts": [
