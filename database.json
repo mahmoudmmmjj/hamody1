@@ -16,7 +16,16 @@
       "createdAt": "2026-02-16T02:27:58.814Z"
     }
   ],
-  "posts": [],
+  "posts": [
+    {
+      "id": "post1771211361133",
+      "content": "غفقغ",
+      "image": "",
+      "isPinned": true,
+      "authorId": "admin1",
+      "createdAt": "2026-02-16T03:09:21.133Z"
+    }
+  ],
   "likes": [],
   "messages": [],
   "notifications": [],
