@@ -24,6 +24,14 @@
       "isPinned": true,
       "authorId": "admin1",
       "createdAt": "2026-02-16T02:50:52.342Z"
+    },
+    {
+      "id": "post1771210344342",
+      "content": "y",
+      "image": "",
+      "isPinned": true,
+      "authorId": "admin1",
+      "createdAt": "2026-02-16T02:52:24.342Z"
     }
   ],
   "likes": [],
