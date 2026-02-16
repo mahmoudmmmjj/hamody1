@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شبكة التواصل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding-bottom: 80px; }
+        .container { max-width: 500px; margin: 0 auto; padding: 15px; }
+        .card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102,126,234,0.4); }
+        .btn-danger { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%); }
+        .btn-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .btn-sm { padding: 8px 15px; width: auto; font-size: 14px; }
+        .input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; margin-bottom: 15px; transition: border-color 0.3s; }
+        .input:focus { outline: none; border-color: #667eea; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 15px; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); }
+        .nav-item { text-decoration: none; color: #667eea; text-align: center; font-size: 12px; cursor: pointer; }
+        .nav-item.active { color: #764ba2; }
+        .nav-item i { font-size: 24px; display: block; margin-bottom: 5px; }
+        .header { display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { color: #667eea; font-size: 20px; }
+        .verified { color: #1da1f2; margin-right: 5px; }
+        .pinned { background: #ffc107; color: #333; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 10px; }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .avatar { width: 45px; height: 45px; border-radius: 50%; background: #667eea; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; overflow: hidden; cursor: pointer; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .post-actions { display: flex; gap: 20px; padding-top: 10px; border-top: 1px solid #eee; margin-top: 10px; }
+        .post-actions button { background: none; border: none; cursor: pointer; font-size: 14px; color: #666; display: flex; align-items: center; gap: 5px; }
+        .post-actions button.liked { color: #ff6b6b; }
+        .chat-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .chat-item:hover { background: #f5f5f5; border-radius: 10px; }
+        .message-bubble { padding: 10px 15px; border-radius: 15px; margin: 5px 0; max-width: 80%; word-wrap: break-word; }
+        .message-sent { background: #667eea; color: white; margin-left: auto; }
+        .message-received { background: #e0e0e0; margin-right: auto; }
+        .chat-container { height: calc(100vh - 250px); overflow-y: auto; padding: 10px; background: #f5f5f5; border-radius: 15px; margin-bottom: 15px; }
+        .notification-item { padding: 15px; border-bottom: 1px solid #eee; }
+        .notification-item.unread { background: #e3f2fd; }
+        .user-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .enable-notifications { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%); color: white; padding: 15px 25px; border-radius: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); cursor: pointer; font-weight: bold; z-index: 10000; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 5px 20px rgba(255,107,107,0.4); } 50% { box-shadow: 0 5px 30px rgba(255,107,107,0.8); } }
+        .hidden { display: none !important; }
+        .center-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .avatar-upload { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; background: #667eea; color: white; font-size: 40px; cursor: pointer; overflow: hidden; position: relative; }
+        .avatar-upload img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-upload input { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <!-- صفحة تسجيل الدخول -->
+    <div id="loginPage" class="container center-screen">
+        <div class="card" style="width: 100%; max-width: 400px;">
+            <h2 style="text-align: center; color: #667eea; margin-bottom: 20px;">🔑 تسجيل الدخول</h2>
+            <form id="loginForm">
+                <input type="text" class="input" id="loginUsername" placeholder="اسم المستخدم" required>
+                <input type="password" class="input" id="loginPassword" placeholder="كلمة المرور" required>
+                <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <input type="checkbox" id="rememberMe"> تذكرني
+                </label>
+                <button type="submit" class="btn">دخول</button>
+            </form>
+            <p style="text-align: center; margin-top: 15px;">ليس لديك حساب؟ <a href="#" onclick="showPage('register')" style="color: #667eea;">إنشاء حساب</a></p>
+        </div>
+    </div>
+
+    <!-- صفحة التسجيل -->
+    <div id="registerPage" class="container hidden" style="padding-top: 20px;">
+        <div class="card">
+            <h2 style="text-align: center; color: #667eea; margin-bottom: 20px;">📝 إنشاء حساب جديد</h2>
+            <form id="registerForm">
+                <div class="avatar-upload" id="avatarPreview">
+                    <span id="avatarText">📷</span>
+                    <input type="file" id="registerAvatar" accept="image/*">
+                </div>
+                <input type="text" class="input" id="registerUsername" placeholder="اسم المستخدم (اليوزر)" required>
+                <input type="email" class="input" id="registerEmail" placeholder="البريد الإلكتروني" required>
+                <input type="tel" class="input" id="registerPhone" placeholder="رقم الهاتف">
+                <input type="number" class="input" id="registerAge" placeholder="العمر" min="10" max="100" required>
+                <select class="input" id="registerGender" required>
+                    <option value="">اختر النوع...</option>
+                    <option value="male">ذكر</option>
+                    <option value="female">أنثى</option>
+                </select>
+                <select class="input" id="registerCountry" required>
+                    <option value="">اختر البلد...</option>
+                    <option value="مصر">مصر</option>
+                    <option value="السعودية">السعودية</option>
+                    <option value="الإمارات">الإمارات</option>
+                    <option value="الكويت">الكويت</option>
+                    <option value="قطر">قطر</option>
+                    <option value="البحرين">البحرين</option>
+                    <option value="الأردن">الأردن</option>
+                    <option value="العراق">العراق</option>
+                    <option value="المغرب">المغرب</option>
+                    <option value="الجزائر">الجزائر</option>
+                    <option value="تونس">تونس</option>
+                    <option value="أخرى">أخرى</option>
+                </select>
+                <input type="password" class="input" id="registerPassword" placeholder="كلمة المرور" required>
+                <button type="submit" class="btn">إنشاء الحساب</button>
+            </form>
+            <p style="text-align: center; margin-top: 15px;">لديك حساب؟ <a href="#" onclick="showPage('login')" style="color: #667eea;">تسجيل الدخول</a></p>
+        </div>
+    </div>
+
+    <!-- الصفحة الرئيسية -->
+    <div id="homePage" class="container hidden">
+        <div id="notificationBtn" class="enable-notifications hidden" onclick="enableNotifications()">🔔 فعّل الإشعارات لتصلك التنبيهات</div>
+        
+        <div class="card header">
+            <h1>🏠 الصفحة الرئيسية</h1>
+            <div onclick="showPage('profile')" style="cursor: pointer;">
+                <span id="homeUsername"></span>
+                <span id="homeVerified" class="verified hidden">✓</span>
+            </div>
+        </div>
+
+        <form id="searchForm" style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <input type="text" class="input" id="searchInput" placeholder="ابحث باليوزر..." style="margin-bottom: 0;">
+            <button type="submit" class="btn btn-sm">🔍</button>
+        </form>
+
+        <div class="card">
+            <form id="postForm">
+                <textarea class="input" id="postContent" placeholder="شاركنا أفكارك..." style="resize: none; height: 80px;"></textarea>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <label style="cursor: pointer; color: #667eea;">
+                        🖼️ صورة <input type="file" id="postImage" accept="image/*" style="display: none;">
+                    </label>
+                    <button type="submit" class="btn btn-sm">نشر</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="postsContainer"></div>
+        <div id="bottomNav"></div>
+    </div>
+
+    <!-- صفحة الدردشات -->
+    <div id="chatsPage" class="container hidden">
+        <div class="card header"><h1>💬 الدردشات</h1></div>
+        <div class="card" id="chatsContainer" style="padding: 0;"></div>
+        <div id="bottomNavChats"></div>
+    </div>
+
+    <!-- صفحة المحادثة -->
+    <div id="chatPage" class="container hidden">
+        <div class="card header">
+            <span onclick="showPage('chats')" style="cursor: pointer;">→</span>
+            <h1 id="chatUsername"></h1>
+            <span></span>
+        </div>
+        <div class="chat-container" id="messagesContainer"></div>
+        <form id="messageForm" style="display: flex; gap: 10px;">
+            <input type="text" class="input" id="messageInput" placeholder="اكتب رسالتك..." style="margin-bottom: 0;">
+            <button type="submit" class="btn btn-sm">📤</button>
+        </form>
+    </div>
+
+    <!-- صفحة الإشعارات -->
+    <div id="notificationsPage" class="container hidden">
+        <div class="card header"><h1>🔔 الإشعارات</h1></div>
+        <div class="card" id="notificationsContainer"></div>
+        <div id="bottomNavNotif"></div>
+    </div>
+
+    <!-- صفحة الملف الشخصي -->
+    <div id="profilePage" class="container hidden">
+        <div class="card header">
+            <h1>👤 حسابي</h1>
+            <button id="adminBtn" class="btn btn-sm hidden" onclick="showPage('admin')">لوحة التحكم</button>
+        </div>
+
+        <div class="card">
+            <form id="profileForm">
+                <div class="avatar-upload" id="profileAvatarPreview">
+                    <span id="profileAvatarText">👤</span>
+                    <input type="file" id="profileAvatar" accept="image/*">
+                </div>
+                <input type="text" class="input" id="profileUsername" placeholder="الاسم">
+                <input type="email" class="input" id="profileEmail" placeholder="البريد">
+                <input type="tel" class="input" id="profilePhone" placeholder="الهاتف">
+                <input type="text" class="input" id="profileCountry" placeholder="البلد">
+                <input type="password" class="input" id="profilePassword" placeholder="كلمة مرور جديدة (اتركه فارغ)">
+                <button type="submit" class="btn">حفظ التغييرات</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-bottom: 15px;">منشوراتي</h3>
+            <div id="myPostsContainer"></div>
+        </div>
+
+        <button class="btn btn-danger" onclick="logout()">تسجيل الخروج</button>
+        <div id="bottomNavProfile"></div>
+    </div>
+
+    <!-- صفحة المستخدم -->
+    <div id="userPage" class="container hidden">
+        <div class="card header">
+            <span onclick="showPage('home')" style="cursor: pointer;">→</span>
+            <h1>👤 الملف الشخصي</h1>
+            <span></span>
+        </div>
+        <div class="card" style="text-align: center;" id="userInfo"></div>
+        <div class="card"><h3 style="margin-bottom: 15px;">المنشورات</h3><div id="userPosts"></div></div>
+        <div id="bottomNavUser"></div>
+    </div>
+
+    <!-- صفحة البحث -->
+    <div id="searchPage" class="container hidden">
+        <div class="card header"><h1>🔍 نتائج البحث</h1></div>
+        <div class="card" id="searchResults" style="padding: 0;"></div>
+        <div id="bottomNavSearch"></div>
+    </div>
+
+    <!-- صفحة الأدمن -->
+    <div id="adminPage" class="container hidden">
+        <div class="card header">
+            <h1>⚙️ لوحة التحكم</h1>
+            <button class="btn btn-sm" onclick="showPage('home')">الرئيسية</button>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-bottom: 15px;">🛠️ إدارة الموقع</h3>
+            <button id="maintenanceBtn" class="btn btn-danger" onclick="toggleMaintenance()">🔧 تفعيل الصيانة</button>
+            <button class="btn" style="margin-top: 10px;" onclick="downloadDatabase()">📥 تحميل قاعدة البيانات</button>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-bottom: 15px;">👥 المستخدمين</h3>
+            <div id="adminUsersContainer"></div>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-bottom: 15px;">📰 المنشورات</h3>
+            <div id="adminPostsContainer"></div>
+        </div>
+    </div>
+
+    <!-- صفحة الصيانة -->
+    <div id="maintenancePage" class="container center-screen hidden">
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 80px; margin-bottom: 20px;">🔧</div>
+            <h2 style="margin-bottom: 15px;">الموقع تحت الصيانة</h2>
+            <p style="color: #666;">نقوم بتحديث الموقع لخدمتكم بشكل أفضل. يرجى المحاولة لاحقاً.</p>
+        </div>
+    </div>
+
+    <script>
+    // ============ قاعدة البيانات المحلية ============
+    const DB = {
+        get: (key) => JSON.parse(localStorage.getItem(key) || 'null'),
+        set: (key, value) => localStorage.setItem(key, JSON.stringify(value)),
+        init: () => {
+            if (!DB.get('users')) {
+                DB.set('users', [{
+                    id: 'admin1',
+                    username: 'hamody',
+                    email: 'admin@social.com',
+                    password: 'Mm772005',
+                    phone: '',
+                    age: 25,
+                    gender: 'male',
+                    country: 'مصر',
+                    avatar: '',
+                    isVerified: true,
+                    isAdmin: true,
+                    isBanned: false,
+                    createdAt: new Date().toISOString()
+                }]);
+            }
+            if (!DB.get('posts')) DB.set('posts', []);
+            if (!DB.get('likes')) DB.set('likes', []);
+            if (!DB.get('messages')) DB.set('messages', []);
+            if (!DB.get('notifications')) DB.set('notifications', []);
+            if (!DB.get('settings')) DB.set('settings', { maintenanceMode: false });
+        }
+    };
+    DB.init();
+
+    // ============ المتغيرات العامة ============
+    let currentUser = null;
+    let currentChatUser = null;
+    let lastNotificationId = 0;
+
+    // ============ الدوال المساعدة ============
+    function showPage(page) {
+        document.querySelectorAll('.container').forEach(el => el.classList.add('hidden'));
+        document.getElementById(page + 'Page')?.classList.remove('hidden');
+        
+        if (page === 'home') loadHome();
+        if (page === 'chats') loadChats();
+        if (page === 'notifications') loadNotifications();
+        if (page === 'profile') loadProfile();
+        if (page === 'admin') loadAdmin();
+    }
+
+    function checkAuth() {
+        const savedUser = DB.get('currentUser');
+        if (savedUser) {
+            const users = DB.get('users');
+            currentUser = users.find(u => u.id === savedUser.id);
+            if (currentUser && currentUser.isBanned) {
+                currentUser = null;
+                DB.set('currentUser', null);
+                alert('تم حظر حسابك!');
+                return false;
+            }
+        }
+        return currentUser;
+    }
+
+    function checkMaintenance() {
+        const settings = DB.get('settings');
+        return settings.maintenanceMode && !currentUser?.isAdmin;
+    }
+
+    function renderBottomNav(active) {
+        const nav = `
+            <div class="bottom-nav">
+                <div class="nav-item ${active === 'home' ? 'active' : ''}" onclick="showPage('home')">
+                    <span>🏠</span><span>الرئيسية</span>
+                </div>
+                <div class="nav-item ${active === 'chats' ? 'active' : ''}" onclick="showPage('chats')">
+                    <span>💬</span><span>الدردشات</span>
+                </div>
+                <div class="nav-item ${active === 'notifications' ? 'active' : ''}" onclick="showPage('notifications')">
+                    <span>🔔</span><span>الإشعارات</span>
+                </div>
+                <div class="nav-item ${active === 'profile' ? 'active' : ''}" onclick="showPage('profile')">
+                    <span>👤</span><span>حسابي</span>
+                </div>
+            </div>
+        `;
+        return nav;
+    }
+
+    function formatAvatar(user) {
+        if (user.avatar) return `<img src="${user.avatar}" alt="">`;
+        return user.username[0].toUpperCase();
+    }
+
+    function timeAgo(date) {
+        const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+        if (seconds < 60) return 'الآن';
+        if (seconds < 3600) return Math.floor(seconds / 60) + ' دقيقة';
+        if (seconds < 86400) return Math.floor(seconds / 3600) + ' ساعة';
+        return Math.floor(seconds / 86400) + ' يوم';
+    }
+
+    // ============ الإشعارات ============
+    function enableNotifications() {
+        if (!('Notification' in window)) return;
+        Notification.requestPermission().then(perm => {
+            if (perm === 'granted') {
+                document.getElementById('notificationBtn').classList.add('hidden');
+                new Notification('🎉 الإشعارات مفعّلة', { body: 'ستصلك الإشعارات الآن!', dir: 'rtl' });
+            }
+        });
+    }
+
+    function checkNewNotifications() {
+        if (!currentUser) return;
+        const notifications = DB.get('notifications');
+        const newNotifs = notifications.filter(n => n.userId === currentUser.id && n.id > lastNotificationId);
+        
+        newNotifs.forEach(n => {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('🔔 إشعار جديد', { body: n.content, dir: 'rtl' });
+            }
+        });
+        
+        if (newNotifs.length > 0) {
+            lastNotificationId = Math.max(...newNotifs.map(n => n.id));
+        }
+    }
+
+    function addNotification(userId, content, fromUserId = null) {
+        const notifications = DB.get('notifications');
+        notifications.push({
+            id: Date.now(),
+            userId,
+            fromUserId,
+            content,
+            isRead: false,
+            createdAt: new Date().toISOString()
+        });
+        DB.set('notifications', notifications);
+    }
+
+    // ============ تسجيل الدخول ============
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+        const remember = document.getElementById('rememberMe').checked;
+        
+        const users = DB.get('users');
+        const user = users.find(u => u.username === username && u.password === password);
+        
+        if (!user) {
+            alert('اسم المستخدم أو كلمة المرور غير صحيحة!');
+            return;
+        }
+        
+        if (user.isBanned) {
+            alert('تم حظر حسابك!');
+            return;
+        }
+        
+        currentUser = user;
+        DB.set('currentUser', { id: user.id });
+        
+        if ('Notification' in window && Notification.permission === 'default') {
+            document.getElementById('notificationBtn').classList.remove('hidden');
+        }
+        
+        showPage('home');
+    });
+
+    // ============ التسجيل ============
+    let registerAvatarData = '';
+    document.getElementById('registerAvatar').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                registerAvatarData = e.target.result;
+                document.getElementById('avatarPreview').innerHTML = `<img src="${registerAvatarData}">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('registerUsername').value;
+        const email = document.getElementById('registerEmail').value;
+        
+        const users = DB.get('users');
+        if (users.find(u => u.username === username)) {
+            alert('اسم المستخدم مستخدم بالفعل!');
+            return;
+        }
+        if (users.find(u => u.email === email)) {
+            alert('البريد الإلكتروني مستخدم بالفعل!');
+            return;
+        }
+        
+        const newUser = {
+            id: 'user' + Date.now(),
+            username,
+            email,
+            phone: document.getElementById('registerPhone').value,
+            age: parseInt(document.getElementById('registerAge').value),
+            gender: document.getElementById('registerGender').value,
+            country: document.getElementById('registerCountry').value,
+            password: document.getElementById('registerPassword').value,
+            avatar: registerAvatarData,
+            isVerified: false,
+            isAdmin: false,
+            isBanned: false,
+            createdAt: new Date().toISOString()
+        };
+        
+        users.push(newUser);
+        DB.set('users', users);
+        
+        alert('تم إنشاء الحساب بنجاح!');
+        showPage('login');
+    });
+
+    // ============ الصفحة الرئيسية ============
+    function loadHome() {
+        if (!currentUser) { showPage('login'); return; }
+        if (checkMaintenance()) { showPage('maintenance'); return; }
+        
+        document.getElementById('homeUsername').textContent = currentUser.username;
+        document.getElementById('homeVerified').classList.toggle('hidden', !currentUser.isVerified);
+        document.getElementById('bottomNav').innerHTML = renderBottomNav('home');
+        
+        const posts = DB.get('posts');
+        const likes = DB.get('likes');
+        const users = DB.get('users');
+        
+        const sortedPosts = posts.sort((a, b) => {
+            if (a.isPinned && !b.isPinned) return -1;
+            if (!a.isPinned && b.isPinned) return 1;
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+        
+        let html = '';
+        sortedPosts.forEach(post => {
+            const author = users.find(u => u.id === post.authorId);
+            if (!author || author.isBanned) return;
+            
+            const postLikes = likes.filter(l => l.postId === post.id);
+            const userLiked = postLikes.find(l => l.userId === currentUser.id);
+            
+            html += `
+                <div class="card">
+                    <div class="post-header">
+                        <div class="avatar" onclick="viewUser('${author.username}')">${formatAvatar(author)}</div>
+                        <div>
+                            <strong>${post.isPinned ? '<span class="pinned">📌 مثبت</span>' : ''}${author.username}${author.isVerified ? '<span class="verified">✓</span>' : ''}</strong>
+                            <small style="display: block; color: #888;">${timeAgo(post.createdAt)}</small>
+                        </div>
+                    </div>
+                    <p style="margin: 10px 0;">${post.content}</p>
+                    ${post.image ? `<img src="${post.image}" style="width: 100%; border-radius: 10px;">` : ''}
+                    <div class="post-actions">
+                        <button class="${userLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">❤️ ${postLikes.length}</button>
+                        <button onclick="viewUser('${author.username}')">👤 الملف</button>
+                        ${currentUser.id === author.id || currentUser.isAdmin ? `<button onclick="deletePost('${post.id}')" style="color: #ff6b6b;">🗑️ حذف</button>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        
+        document.getElementById('postsContainer').innerHTML = html || '<div class="card" style="text-align: center; color: #888;">لا توجد منشورات</div>';
+    }
+
+    // ============ إنشاء بوست ==========
+    let postImageData = '';
+    document.getElementById('postImage').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) { postImageData = e.target.result; };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('postForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const content = document.getElementById('postContent').value;
+        if (!content.trim()) return;
+        
+        const posts = DB.get('posts');
+        const newPost = {
+            id: 'post' + Date.now(),
+            content,
+            image: postImageData,
+            isPinned: currentUser.isAdmin,
+            authorId: currentUser.id,
+            createdAt: new Date().toISOString()
+        };
+        posts.push(newPost);
+        DB.set('posts', posts);
+        
+        // إشعار للجميع إذا أدمن
+        if (currentUser.isAdmin) {
+            const users = DB.get('users');
+            users.forEach(u => {
+                if (u.id !== currentUser.id) {
+                    addNotification(u.id, 'نشر الأدمن منشوراً جديداً', currentUser.id);
+                }
+            });
+        }
+        
+        document.getElementById('postContent').value = '';
+        postImageData = '';
+        document.getElementById('postImage').value = '';
+        loadHome();
+    });
+
+    // ============ البحث ==========
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        if (!query) return;
+        
+        const users = DB.get('users');
+        const results = users.filter(u => u.username.toLowerCase().includes(query) && u.id !== currentUser.id && !u.isBanned);
+        
+        let html = '';
+        results.forEach(u => {
+            html += `
+                <div class="chat-item" onclick="viewUser('${u.username}')">
+                    <div class="avatar">${formatAvatar(u)}</div>
+                    <div>
+                        <strong>${u.username}${u.isVerified ? '<span class="verified">✓</span>' : ''}</strong>
+                        <small style="color: #888;">${u.country || ''}</small>
+                    </div>
+                </div>
+            `;
+        });
+        
+        document.getElementById('searchResults').innerHTML = html || '<p style="text-align: center; padding: 30px; color: #888;">لا توجد نتائج</p>';
+        document.getElementById('bottomNavSearch').innerHTML = renderBottomNav('home');
+        showPage('search');
+    });
+
+    // ============ اللايك ==========
+    function toggleLike(postId) {
+        const likes = DB.get('likes');
+        const existing = likes.find(l => l.userId === currentUser.id && l.postId === postId);
+        
+        if (existing) {
+            const index = likes.indexOf(existing);
+            likes.splice(index, 1);
+        } else {
+            likes.push({ id: 'like' + Date.now(), userId: currentUser.id, postId, createdAt: new Date().toISOString() });
+            
+            const posts = DB.get('posts');
+            const post = posts.find(p => p.id === postId);
+            if (post && post.authorId !== currentUser.id) {
+                addNotification(post.authorId, 'أعجب بمنشورك', currentUser.id);
+            }
+        }
+        
+        DB.set('likes', likes);
+        loadHome();
+    }
+
+    // ============ حذف بوست ==========
+    function deletePost(postId) {
+        if (!confirm('هل أنت متأكد من حذف هذا المنشور؟')) return;
+        
+        let posts = DB.get('posts');
+        posts = posts.filter(p => p.id !== postId);
+        DB.set('posts', posts);
+        
+        let likes = DB.get('likes');
+        likes = likes.filter(l => l.postId !== postId);
+        DB.set('likes', likes);
+        
+        loadHome();
+    }
+
+    // ============ الدردشات ==========
+    function loadChats() {
+        if (!currentUser) { showPage('login'); return; }
+        
+        const messages = DB.get('messages');
+        const users = DB.get('users');
+        
+        const chatUsers = new Map();
+        messages.forEach(m => {
+            const otherId = m.senderId === currentUser.id ? m.receiverId : m.senderId;
+            const other = users.find(u => u.id === otherId);
+            if (other && !other.isBanned) {
+                if (!chatUsers.has(otherId)) {
+                    chatUsers.set(otherId, { user: other, lastMessage: m.content, time: m.createdAt });
+                } else if (new Date(m.createdAt) > new Date(chatUsers.get(otherId).time)) {
+                    chatUsers.get(otherId).lastMessage = m.content;
+                    chatUsers.get(otherId).time = m.createdAt;
+                }
+            }
+        });
+        
+        let html = '';
+        chatUsers.forEach((chat) => {
+            html += `
+                <div class="chat-item" onclick="openChat('${chat.user.id}')">
+                    <div class="avatar">${formatAvatar(chat.user)}</div>
+                    <div>
+                        <strong>${chat.user.username}${chat.user.isVerified ? '<span class="verified">✓</span>' : ''}</strong>
+                        <small style="color: #888;">${chat.lastMessage}</small>
+                    </div>
+                </div>
+            `;
+        });
+        
+        document.getElementById('chatsContainer').innerHTML = html || '<p style="text-align: center; padding: 30px; color: #888;">لا توجد محادثات بعد</p>';
+        document.getElementById('bottomNavChats').innerHTML = renderBottomNav('chats');
+    }
+
+    function openChat(userId) {
+        const users = DB.get('users');
+        currentChatUser = users.find(u => u.id === userId);
+        if (!currentChatUser) return;
+        
+        document.getElementById('chatUsername').textContent = currentChatUser.username;
+        loadMessages();
+        showPage('chat');
+        
+        // تحديث كل 3 ثواني
+        clearInterval(window.chatInterval);
+        window.chatInterval = setInterval(loadMessages, 3000);
+    }
+
+    function loadMessages() {
+        if (!currentChatUser) return;
+        
+        const messages = DB.get('messages');
+        const chatMsgs = messages.filter(m => 
+            (m.senderId === currentUser.id && m.receiverId === currentChatUser.id) ||
+            (m.senderId === currentChatUser.id && m.receiverId === currentUser.id)
+        ).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        
+        let html = '';
+        chatMsgs.forEach(m => {
+            const isSent = m.senderId === currentUser.id;
+            html += `<div class="message-bubble ${isSent ? 'message-sent' : 'message-received'}">${m.content}</div>`;
+        });
+        
+        const container = document.getElementById('messagesContainer');
+        container.innerHTML = html;
+        container.scrollTop = container.scrollHeight;
+    }
+
+    document.getElementById('messageForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const input = document.getElementById('messageInput');
+        const content = input.value.trim();
+        if (!content || !currentChatUser) return;
+        
+        const messages = DB.get('messages');
+        messages.push({
+            id: 'msg' + Date.now(),
+            senderId: currentUser.id,
+            receiverId: currentChatUser.id,
+            content,
+            isRead: false,
+            createdAt: new Date().toISOString()
+        });
+        DB.set('messages', messages);
+        
+        addNotification(currentChatUser.id, `رسالة جديدة من ${currentUser.username}: ${content.substring(0, 30)}`, currentUser.id);
+        
+        input.value = '';
+        loadMessages();
+    });
+
+    // ============ الإشعارات ==========
+    function loadNotifications() {
+        if (!currentUser) { showPage('login'); return; }
+        
+        const notifications = DB.get('notifications');
+        const userNotifs = notifications.filter(n => n.userId === currentUser.id).reverse();
+        
+        let html = '';
+        userNotifs.forEach(n => {
+            html += `
+                <div class="notification-item ${n.isRead ? '' : 'unread'}">
+                    <p>${n.content}</p>
+                    <small style="color: #888;">${timeAgo(n.createdAt)}</small>
+                </div>
+            `;
+        });
+        
+        document.getElementById('notificationsContainer').innerHTML = html || '<p style="text-align: center; padding: 30px; color: #888;">لا توجد إشعارات</p>';
+        
+        // تحديث كمقروءة
+        notifications.forEach(n => { if (n.userId === currentUser.id) n.isRead = true; });
+        DB.set('notifications', notifications);
+        
+        document.getElementById('bottomNavNotif').innerHTML = renderBottomNav('notifications');
+    }
+
+    // ============ الملف الشخصي ==========
+    let profileAvatarData = '';
+    document.getElementById('profileAvatar').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profileAvatarData = e.target.result;
+                document.getElementById('profileAvatarPreview').innerHTML = `<img src="${profileAvatarData}">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function loadProfile() {
+        if (!currentUser) { showPage('login'); return; }
+        
+        document.getElementById('profileUsername').value = currentUser.username;
+        document.getElementById('profileEmail').value = currentUser.email;
+        document.getElementById('profilePhone').value = currentUser.phone || '';
+        document.getElementById('profileCountry').value = currentUser.country || '';
+        
+        if (currentUser.avatar) {
+            document.getElementById('profileAvatarPreview').innerHTML = `<img src="${currentUser.avatar}">`;
+        }
+        
+        document.getElementById('adminBtn').classList.toggle('hidden', !currentUser.isAdmin);
+        
+        // منشوراتي
+        const posts = DB.get('posts');
+        const myPosts = posts.filter(p => p.authorId === currentUser.id).reverse();
+        
+        let html = '';
+        myPosts.forEach(p => {
+            html += `
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <span>${p.content.substring(0, 50)}...</span>
+                    <button onclick="deletePost('${p.id}')" style="color: #ff6b6b; background: none; border: none; cursor: pointer;">🗑️</button>
+                </div>
+            `;
+        });
+        document.getElementById('myPostsContainer').innerHTML = html || '<p style="color: #888; text-align: center;">لم تنشر بعد</p>';
+        
+        document.getElementById('bottomNavProfile').innerHTML = renderBottomNav('profile');
+    }
+
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const users = DB.get('users');
+        const userIndex = users.findIndex(u => u.id === currentUser.id);
+        
+        const newUsername = document.getElementById('profileUsername').value;
+        if (newUsername !== currentUser.username && users.find(u => u.username === newUsername)) {
+            alert('اسم المستخدم مستخدم بالفعل!');
+            return;
+        }
+        
+        users[userIndex].username = newUsername;
+        users[userIndex].email = document.getElementById('profileEmail').value;
+        users[userIndex].phone = document.getElementById('profilePhone').value;
+        users[userIndex].country = document.getElementById('profileCountry').value;
+        
+        const newPass = document.getElementById('profilePassword').value;
+        if (newPass) users[userIndex].password = newPass;
+        
+        if (profileAvatarData) users[userIndex].avatar = profileAvatarData;
+        
+        DB.set('users', users);
+        currentUser = users[userIndex];
+        DB.set('currentUser', { id: currentUser.id });
+        
+        alert('تم التحديث!');
+        loadProfile();
+    });
+
+    // ============ عرض مستخدم ==========
+    function viewUser(username) {
+        const users = DB.get('users');
+        const user = users.find(u => u.username === username);
+        if (!user) { alert('المستخدم غير موجود!'); return; }
+        
+        document.getElementById('userInfo').innerHTML = `
+            <div class="avatar" style="width: 80px; height: 80px; margin: 0 auto 15px; font-size: 30px;">${formatAvatar(user)}</div>
+            <h2>${user.username}${user.isVerified ? '<span class="verified">✓</span>' : ''}</h2>
+            <p style="color: #888;">@${user.username}</p>
+            ${user.country ? `<p>📍 ${user.country}</p>` : ''}
+            ${user.phone ? `<p>📱 ${user.phone}</p>` : ''}
+            ${currentUser && currentUser.id !== user.id ? `<button class="btn" style="margin-top: 15px;" onclick="openChat('${user.id}')">💬 مراسلة</button>` : ''}
+        `;
+        
+        const posts = DB.get('posts');
+        const userPosts = posts.filter(p => p.authorId === user.id).reverse();
+        
+        let html = '';
+        userPosts.forEach(p => {
+            html += `<div style="padding: 10px 0; border-bottom: 1px solid #eee;">${p.content}</div>`;
+        });
+        document.getElementById('userPosts').innerHTML = html || '<p style="color: #888; text-align: center;">لا توجد منشورات</p>';
+        
+        document.getElementById('bottomNavUser').innerHTML = renderBottomNav('home');
+        showPage('user');
+    }
+
+    // ============ الأدمن ==========
+    function loadAdmin() {
+        if (!currentUser?.isAdmin) { showPage('home'); return; }
+        
+        const settings = DB.get('settings');
+        document.getElementById('maintenanceBtn').textContent = settings.maintenanceMode ? '✅ إلغاء الصيانة' : '🔧 تفعيل الصيانة';
+        document.getElementById('maintenanceBtn').className = settings.maintenanceMode ? 'btn btn-success' : 'btn btn-danger';
+        
+        // المستخدمين
+        const users = DB.get('users');
+        let usersHtml = '';
+        users.forEach(u => {
+            if (u.isAdmin) {
+                usersHtml += `<div class="user-row"><strong>${u.username}${u.isVerified ? '<span class="verified">✓</span>' : ''} <small style="color: #667eea;">(أدمن)</small></strong></div>`;
+            } else {
+                usersHtml += `
+                    <div class="user-row">
+                        <div><strong>${u.username}${u.isVerified ? '<span class="verified">✓</span>' : ''}</strong>${u.isBanned ? '<small style="color: #ff6b6b;"> (محظور)</small>' : ''}</div>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn btn-sm btn-danger" onclick="toggleBan('${u.id}')">${u.isBanned ? 'فك الحظر' : 'حظر'}</button>
+                            <button class="btn btn-sm" style="background: ${u.isVerified ? '#888' : '#1da1f2'};" onclick="toggleVerify('${u.id}')">✓</button>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+        document.getElementById('adminUsersContainer').innerHTML = usersHtml;
+        
+        // المنشورات
+        const posts = DB.get('posts').reverse();
+        let postsHtml = '';
+        posts.forEach(p => {
+            const author = users.find(u => u.id === p.authorId);
+            postsHtml += `
+                <div class="user-row">
+                    <div><strong>${author?.username || 'محذوف'}</strong><p style="color: #666; font-size: 14px;">${p.content.substring(0, 50)}...</p></div>
+                    <button class="btn btn-sm btn-danger" onclick="deletePost('${p.id}')">🗑️</button>
+                </div>
+            `;
+        });
+        document.getElementById('adminPostsContainer').innerHTML = postsHtml;
+    }
+
+    function toggleBan(userId) {
+        const users = DB.get('users');
+        const user = users.find(u => u.id === userId);
+        if (user) {
+            user.isBanned = !user.isBanned;
+            DB.set('users', users);
+            loadAdmin();
+        }
+    }
+
+    function toggleVerify(userId) {
+        const users = DB.get('users');
+        const user = users.find(u => u.id === userId);
+        if (user) {
+            user.isVerified = !user.isVerified;
+            DB.set('users', users);
+            loadAdmin();
+        }
+    }
+
+    function toggleMaintenance() {
+        const settings = DB.get('settings');
+        settings.maintenanceMode = !settings.maintenanceMode;
+        DB.set('settings', settings);
+        loadAdmin();
+    }
+
+    function downloadDatabase() {
+        const data = {
+            users: DB.get('users'),
+            posts: DB.get('posts'),
+            likes: DB.get('likes'),
+            messages: DB.get('messages'),
+            notifications: DB.get('notifications'),
+            settings: DB.get('settings')
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'social_network_backup.json';
+        a.click();
+    }
+
+    // ============ تسجيل الخروج ==========
+    function logout() {
+        currentUser = null;
+        DB.set('currentUser', null);
+        clearInterval(window.chatInterval);
+        showPage('login');
+    }
+
+    // ============ التهيئة ==========
+    window.onload = function() {
+        if (checkAuth()) {
+            if ('Notification' in window && Notification.permission === 'default') {
+                document.getElementById('notificationBtn').classList.remove('hidden');
+            }
+            showPage('home');
+            
+            // فحص الإشعارات كل 5 ثواني
+            setInterval(checkNewNotifications, 5000);
+        } else {
+            showPage('login');
+        }
+    };
+    </script>
+</body>
+</html>
