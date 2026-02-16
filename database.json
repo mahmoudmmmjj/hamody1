@@ -25,7 +25,7 @@
       "country": "مصر",
       "password": "Mm772005",
       "avatar": "",
-      "isVerified": false,
+      "isVerified": true,
       "isAdmin": false,
       "isBanned": false,
       "createdAt": "2026-02-16T03:10:32.394Z"
