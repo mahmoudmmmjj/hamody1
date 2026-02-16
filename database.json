@@ -33,14 +33,6 @@
   ],
   "posts": [
     {
-      "id": "post1771211361133",
-      "content": "غفقغ",
-      "image": "",
-      "isPinned": true,
-      "authorId": "admin1",
-      "createdAt": "2026-02-16T03:09:21.133Z"
-    },
-    {
       "id": "post1771211444333",
       "content": "Hi",
       "image": "",
@@ -49,25 +41,26 @@
       "createdAt": "2026-02-16T03:10:44.333Z"
     },
     {
-      "id": "post1771211455313",
-      "content": "Hhhh",
+      "id": "post1771211499597",
+      "content": "عع",
       "image": "",
-      "isPinned": false,
-      "authorId": "user1771211432390",
-      "createdAt": "2026-02-16T03:10:55.314Z"
-    },
-    {
-      "id": "post1771211488908",
-      "content": "Gi",
-      "image": "",
-      "isPinned": false,
-      "authorId": "user1771211432390",
-      "createdAt": "2026-02-16T03:11:28.908Z"
+      "isPinned": true,
+      "authorId": "admin1",
+      "createdAt": "2026-02-16T03:11:39.597Z"
     }
   ],
   "likes": [],
   "messages": [],
-  "notifications": [],
+  "notifications": [
+    {
+      "id": 1771211499616,
+      "userId": "user1771211432390",
+      "fromUserId": "admin1",
+      "content": "نشر الأدمن منشوراً جديداً",
+      "isRead": false,
+      "createdAt": "2026-02-16T03:11:39.616Z"
+    }
+  ],
   "settings": {
     "maintenanceMode": false
   }
