@@ -61,7 +61,16 @@
       "createdAt": "2026-02-16T03:00:50.150Z"
     }
   ],
-  "posts": [],
+  "posts": [
+    {
+      "id": "post1771210857342",
+      "content": "G",
+      "image": "",
+      "isPinned": false,
+      "authorId": "user1771210850146",
+      "createdAt": "2026-02-16T03:00:57.342Z"
+    }
+  ],
   "likes": [],
   "messages": [],
   "notifications": [],
